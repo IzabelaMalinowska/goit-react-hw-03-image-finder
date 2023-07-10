@@ -20,3 +20,13 @@ code {
   grid-gap: 16px;
   padding-bottom: 24px;
 }
+
+.CenterButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+

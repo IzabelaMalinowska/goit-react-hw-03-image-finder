@@ -90,7 +90,11 @@ export class App extends Component {
               images={images}
             />
             {images.length > 0 && (
-              <Button onClick={this.handleClickMore}>Load more</Button>
+              <div className={styles.CenterButton}>
+                {images.length > 0 && (
+                  <Button onClick={this.handleClickMore}>Load more</Button>
+                )}
+              </div>
             )}
           </>
         )}

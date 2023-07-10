@@ -3,7 +3,11 @@ import css from './Button.module.css';
 import React from 'react';
 
 const Button = ({ onClick, children }) => (
-  <button className={css.Button} onClick={onClick} type="button">
+  <button
+    className={`${css.Button} ${css.CenterButton}`}
+    onClick={onClick}
+    type="button"
+  >
     {children}
   </button>
 );
