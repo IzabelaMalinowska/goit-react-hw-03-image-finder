@@ -1,10 +1,10 @@
 import { Component } from 'react';
-import { Searchbar } from './Searchbar/Searchbar';
+import  Searchbar from './Searchbar/Searchbar';
 import { fetchImages } from './api/fetchImages';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Button } from './Button/Button';
-import { Loader } from './Loader/Loader';
-import { Modal } from './Modal/Modal';
+import  ImageGallery  from './ImageGallery/ImageGallery';
+import  Button  from './Button/Button';
+import Loader from './Loader/Loader';
+import  Modal  from './Modal/Modal';
 import React from 'react';
 import styles from '../index.css';
 
@@ -21,29 +21,28 @@ export class App extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
-    this.setState({ isLoading: true });
     const inputForSearch = e.target.elements.inputForSearch;
-    if (inputForSearch.value.trim() === '') {
+    const searchValue = inputForSearch.value.trim();
+    if (searchValue === '') {
       return;
     }
-    const response = await fetchImages(inputForSearch.value, 1);
+    this.setState({ isLoading: true });
+    const response = await fetchImages(searchValue, this.state.pageNr); // Poprawiono przekazywanie pageNr
     this.setState({
       images: response,
       isLoading: false,
-      currentSearch: inputForSearch.value,
-      pageNr: 1,
+      currentSearch: searchValue,
+      pageNr: 1, // Ustawiono pageNr na 1 po wykonaniu nowego wyszukiwania
     });
   };
 
   handleClickMore = async () => {
-    const response = await fetchImages(
-      this.state.currentSearch,
-      this.state.pageNr + 1
-    );
-    this.setState({
-      images: [...this.state.images, ...response],
-      pageNr: this.state.pageNr + 1,
-    });
+    const { currentSearch, pageNr } = this.state;
+    const response = await fetchImages(currentSearch, pageNr + 1);
+    this.setState(prevState => ({
+      images: [...prevState.images, ...response],
+      pageNr: prevState.pageNr + 1,
+    }));
   };
 
   handleImageClick = (url, alt) => {
@@ -77,26 +76,28 @@ export class App extends Component {
   };
 
   render() {
+    const { isLoading, images, modalOpen, modalImg, modalAlt } = this.state;
+
     return (
       <div className={styles.Loader}>
-        {this.state.isLoading ? (
+        {isLoading ? (
           <Loader />
         ) : (
-          <React.Fragment>
+          <>
             <Searchbar onSubmit={this.handleSubmit} />
             <ImageGallery
               onImageClick={this.handleImageClick}
-              images={this.state.images}
+              images={images}
             />
-            {this.state.images.length > 0 ? (
-              <Button onClick={this.handleClickMore} />
-            ) : null}
-          </React.Fragment>
+            {images.length > 0 && (
+              <Button onClick={this.handleClickMore}>Load more</Button>
+            )}
+          </>
         )}
-        {this.state.modalOpen && (
+        {modalOpen && (
           <Modal
-            src={this.state.modalImg}
-            alt={this.state.modalAlt}
+            src={modalImg}
+            alt={modalAlt}
             handleClose={this.handleModalClose}
           />
         )}
